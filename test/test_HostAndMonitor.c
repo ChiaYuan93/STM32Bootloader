@@ -4,10 +4,11 @@
 #include "Host.h"
 #include "Monitor.h"
 #include "Packet.h"
-#include "stm32f1xx_hal_def.h"
+#include "mock_stm32f1xx_hal_def.h"
 #include "mock_Serial.h"
 #include "mock_Stm32Uart.h"
 #include "mock_Stm32Functions.h"
+#include "strtonumber.h"
 
 #define K   			1024
 #define BASEADDRESS		0x08000000
@@ -25,16 +26,16 @@ HAL_StatusTypeDef fake_HAL_UART_Init(UART_HandleTypeDef *huart, int NumCalls) {
   return (HAL_StatusTypeDef)0xdeadbeef;	
 }
 
-HAL_StatusTypeDef fake_HAL_UART_Transmit(UART_HandleTypeDef *huart, uint8_t *pData, uint16_t Size, uint32_t Timeout, int NumCalls) {
+HAL_StatusTypeDef fake_HAL_UART_Transmit(uint8_t *pData, uint16_t Size, int NumCalls) {
   memcpy(&monitor2HostSerialBuffer[monitor2HostBufferIdx], pData, Size);
   monitor2HostBufferIdx += Size;
   return Size;
 }
 
-HAL_StatusTypeDef fake_HAL_UART_Receive(UART_HandleTypeDef *huart, uint8_t *pData, uint16_t Size, uint32_t Timeout, int NumCalls) {
+HAL_StatusTypeDef fake_HAL_UART_Receive(uint8_t *pData, uint16_t Size, int NumCalls) {
   int BuffSize = host2MonitorBufferIdx;
-  memcpy(&Size, host2MonitorSerialBuffer, host2MonitorBufferIdx);
-  monitor2HostBufferIdx = 0;
+  memcpy(pData, host2MonitorSerialBuffer, host2MonitorBufferIdx);
+  host2MonitorBufferIdx = 0;
   return BuffSize;  
 }
 
@@ -70,6 +71,14 @@ void fake_flash_pageErase(uint32_t address, int NumCalls) {
   } 
 }
 
+uint8_t *fakeUartConfigForHostToSTM32(int byteToReturnPerCall){
+ 
+}
+
+uint8_t fakeUartConfigForSTM32ToHost(int byteToReturnPerCall){
+  	
+}
+
 void setupFakeSerial() {
   host2MonitorBufferIdx = 0;
   monitor2HostBufferIdx = 0;
@@ -86,19 +95,23 @@ void setupFakeSerial() {
   flash_pageErase_StubWithCallback(fake_flash_pageErase);
 } 
 
+void xtest_fake_Uart_Config_For_Host_To_STM32_should_return_correspoding_byte_of_data(void) {
+ 
+}
+
 void xtest_host_sendPacket_FLASH_MASS_ERASE_(void) {
   int i;
   char errMsg[256];
     
   setupFakeSerial();
   
-  sendPacket(FLASH_MASS_ERASE, NULL, 0);
+  sendPacket(FLASH_MASS_ERASE, 0, NULL);
   // State machine code in STM32
-  handlePacketStateMachine(FLASH_MASS_ERASE);
-  handlePacketStateMachine(FLASH_MASS_ERASE);
-  handlePacketStateMachine(FLASH_MASS_ERASE);
-  handlePacketStateMachine(FLASH_MASS_ERASE);
-  handlePacketStateMachine(FLASH_MASS_ERASE);
+  handlePacketStateMachine();
+  handlePacketStateMachine();
+  handlePacketStateMachine();
+  handlePacketStateMachine();
+  handlePacketStateMachine();
   
   for(i = 0; i < 64*K; i++) {
     sprintf(errMsg, "Flash at address %d is not properly erased.", i);
@@ -115,8 +128,8 @@ void test_host_sendPacket_FLASH_PAGE_ERASE_(void) {
     
   setupFakeSerial();
   
-  sendPacket(FLASH_PAGE_ERASE, NULL, 0);
-  handlePacketStateMachine(FLASH_PAGE_ERASE);
+  sendPacket(FLASH_PAGE_ERASE, 0, NULL);			//Host -> STM32
+  handlePacketStateMachine();						//STM32
   
   for(i = 0; i < K; i++) {
     sprintf(errMsg, "Flash at address %d is not properly erased.", i);

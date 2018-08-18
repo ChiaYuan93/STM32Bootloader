@@ -3,6 +3,6 @@
 #include <stdint.h>
 #include "unity.h"
 
-void sendPacket(uint8_t type, uint8_t *data, uint8_t size);
+void sendPacket(uint8_t type, uint8_t size, uint8_t *data);
 
 #endif // _HOST_H

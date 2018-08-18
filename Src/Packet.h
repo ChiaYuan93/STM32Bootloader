@@ -13,4 +13,14 @@
 #define FALSH_UNLOCK				0x15
 #define FLASH_LOCK 					0x16
 
+typedef struct Packet Packet;
+
+struct Packet{
+  uint8_t type;
+  uint8_t length;
+  uint8_t data[0];
+};
+
+int uartReceivedPacket(Packet *packet);
+
 #endif  // __Packet_H__

@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include "unity.h"
 
-void handlePacketStateMachine(uint8_t packetType);
+void handlePacketStateMachine();
 void initFlashPageInfo();
 int hasPageBeenErased(int pageNumber);
 void setPageArray(int pageNumber);

@@ -3,8 +3,8 @@
 #include "stm32f1xx_hal_def.h"
 
 HAL_StatusTypeDef HAL_UART_Init(UART_HandleTypeDef *huart);
-HAL_StatusTypeDef HAL_UART_Transmit(UART_HandleTypeDef *huart, uint8_t *pData, uint16_t Size, uint32_t Timeout);
-HAL_StatusTypeDef HAL_UART_Receive(UART_HandleTypeDef *huart, uint8_t *pData, uint16_t Size, uint32_t Timeout);
+HAL_StatusTypeDef HAL_UART_Transmit(uint8_t *pData, uint16_t Size);
+HAL_StatusTypeDef HAL_UART_Receive(uint8_t *pData, uint16_t Size);
 
 #endif // __STM32F1xx_HAL_UART_H 
 
